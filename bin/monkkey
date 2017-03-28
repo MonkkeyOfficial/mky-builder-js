@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+"use strict";
+
+var path = require('path'),
+    fs = require('fs');
+
+var lib = path.resolve(path.join(__dirname, '../lib/monkkey.js'));
+require(lib).execute();
