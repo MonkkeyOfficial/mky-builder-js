@@ -1,6 +1,6 @@
 {
   "name": "monkkey",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Manage the compression and the publication of exercice environments based on code execution",
   "main": "./lib/monkkey",
   "keywords": [
