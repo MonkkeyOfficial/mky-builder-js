@@ -41,6 +41,9 @@ check | Check if the files are valid
 run \<name> | Run a macro in the local configuration file
 publish \<id> \<files> | Publish the `tar+gzip` files to the remote server
 compile \<folders> | Compile the folders into `tar+gzip` files
+adduser | Create a new user on the remote server
+connect \<username> | Connect to an existing user account
+disconnect | Disconnect from the session (destroy it on the server)
 
 ### From javascript
 
@@ -55,6 +58,10 @@ Function | Description
 update([options: Object]) | compile + publish
 publish(url: String, filePath: String, [options: Object]) | Publish a compiled file to a remote server
 compile([folders: Array], [options: Object]) | check + Compile the current folder or the specified folders
+connect(username, password, url, callback) | Connect to an existing user account
+disconnect(url, session, callback) | Disconnect from the session (destroy it on the server)
+create(username, password, email, url, callback) | Create a new user on the remote server
+getUser(url, session, callback) | Get the user associated with the specified session
 
 #### Compile([folders: Array], [options: Object]) : void
 
