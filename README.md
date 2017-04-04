@@ -161,5 +161,4 @@ monkkey.update(function(o, error) {
 - [ ] Add 'check' command : check files
 - [ ] Add 'run' command
 - [x] Transform to TypeScript for a better maintainability
-- [ ] Add TypeScript support (@type)
-
+- [x] Add TypeScript support (embedded)
