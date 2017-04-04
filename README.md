@@ -160,6 +160,6 @@ monkkey.update(function(o, error) {
   - [ ] Check user rights
 - [ ] Add 'check' command : check files
 - [ ] Add 'run' command
-- [ ] Transform to TypeScript for a better maintainability
+- [x] Transform to TypeScript for a better maintainability
 - [ ] Add TypeScript support (@type)
 

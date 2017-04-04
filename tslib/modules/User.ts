@@ -1,4 +1,4 @@
-var request = require('request');
+import * as request from 'request'
 
 function reqServer(url, data, session, callbacks)
 {
@@ -56,28 +56,29 @@ function toSuffixableUrl(url)
     return url;
 }
 
-module.exports = {
-    create: function(username, password, email, url, callbacks)
-    {
-        reqServer(toSuffixableUrl(url) + '/user/create', {
-            username: username,
-            password: password,
-            email: email
-        }, undefined, callbacks);
-    },
-    connect: function(username, password, url, callbacks)
-    {
-        reqServer(toSuffixableUrl(url) + '/user/connect', {
-            username: username,
-            password: password
-        }, undefined, callbacks);
-    },
-    getUser: function(url, session, callbacks)
-    {
-        reqServer(toSuffixableUrl(url) + '/user', undefined, session, callbacks);
-    },
-    disconnect: function(url, session, callbacks)
-    {
-        reqServer(toSuffixableUrl(url) + '/user/connect', undefined, session, callbacks);
-    }
+export function create(username : string, password : string, email : string, url : string, callbacks)
+{
+    reqServer(toSuffixableUrl(url) + '/user/create', {
+        username: username,
+        password: password,
+        email: email
+    }, undefined, callbacks);
+}
+
+export function connect(username : string, password : string, url : string, callbacks)
+{
+    reqServer(toSuffixableUrl(url) + '/user/connect', {
+        username: username,
+        password: password
+    }, undefined, callbacks);
+}
+
+export function getUser(url : string, session : string, callbacks)
+{
+    reqServer(toSuffixableUrl(url) + '/user', undefined, session, callbacks);
+}
+
+export function disconnect(url : string, session : string, callbacks)
+{
+    reqServer(toSuffixableUrl(url) + '/user/connect', undefined, session, callbacks);
 }

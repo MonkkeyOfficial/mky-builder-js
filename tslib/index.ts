@@ -1,46 +1,49 @@
-var fs = require('fs-extra'),
-    path = require('path'),
-    builder = require('./builder.js'),
-    globalConfig = require('./globalConfig.js'),
-    tester = require('./configTester.js'),
-    zip = require('./zip.js'),
-    pusher = require('./pusher.js'),
-    crypto = require('crypto'),
-    userManager = require('./user.js');
+import * as crypto from 'crypto'
+import * as fs from 'fs-extra'
+import * as path from 'path'
+import * as read from 'read'
+import * as URL from 'url'
 
-exports.execute = function()
+import globalConfig from './modules/GlobalConfig'
+import * as tester from './modules/ConfigTester'
+import * as userManager from './modules/User'
+import * as builder from './modules/Builder'
+import * as pusher from './modules/Pusher'
+import zip from './modules/Zip'
+
+export function execute()
 {
     exports.commandLine(process.argv);
 }
 
-/**
- * @param {String} url
- * @param {String} filePath
- * @param {(Object|Function)} options
- * @param {Function} options.start
- * @param {Function} options.success
- * @param {Function} options.error
- */
-exports.publish = function(url, filePath, options = null)
+export interface StartSuccessErrorCallbacks
+{
+    start? : Function,
+    success? : Function,
+    error? : Function
+}
+
+export function publish(url : string, filePath : string, options? : StartSuccessErrorCallbacks | Function)
 {
     if(!options)
         options = {};
     if(options.constructor === Function)
     {
-        var callback = options;
+        let callback = <Function>options;
         options = {
             start: (o) => callback(o, null),
             error: (o, e) => callback(o, e),
             success: (o) => callback(o, null)
         }
     }
+    let callbacks = <StartSuccessErrorCallbacks>options;
 
     filePath = path.resolve(filePath);
     fs.exists(filePath, exists => {
         if(!exists)
         {
-            if(options.error)
-                options.error(null, 'The file \'' + filePath + '\' doesn\'t exist.');
+            if(callbacks.error)
+                callbacks.error(null, 'The file \'' + filePath + '\' doesn\'t exist.');
             return;
         }
 
@@ -60,7 +63,7 @@ exports.publish = function(url, filePath, options = null)
  * @param {Function} options.success
  * @param {Function} options.start
  */
-exports.compile = function(folders = null, options = null)
+export function compile(folders = null, options = null)
 {
     if(folders && folders.constructor === Object)
     {
@@ -82,7 +85,7 @@ exports.compile = function(folders = null, options = null)
     }
 
     folders.forEach(function(folder) {
-        fs.readJson(path.join(folder, globalConfig.configFileName), (e, config) => {
+        fs.readJson(path.join(folder, globalConfig.configFileName), (e : any, config) => {
             while(config.url && config.url.length > 0 && config.url.indexOf('/') === config.url.length - 1)
             {
                 config.url = config.url.substring(0, config.url.length - 1);
@@ -114,7 +117,7 @@ exports.compile = function(folders = null, options = null)
             if(options.compressionStarted)
                 options.start(callbackArguments);
             builder.createTempFolder(config, folder, dest, () => {
-                zip.zip(dest, destZip, (src, dest) => {
+                zip(dest, destZip, (src, dest) => {
                     if(options.success)
                         options.success(callbackArguments);
                 }, (e, src, dest) => {
@@ -134,7 +137,7 @@ exports.compile = function(folders = null, options = null)
  * @param {Function} options.push.success
  * @param {Function} options.push.error
  */
-exports.update = function(options = null)
+export function update(options = null)
 {
     if(!options)
         options = {};
@@ -175,7 +178,7 @@ exports.update = function(options = null)
     });
 }
 
-exports.getUser = function(url, session, callback)
+export function getUser(url, session, callback)
 {
     userManager.getUser(url, session, {
         error: e => {
@@ -186,7 +189,7 @@ exports.getUser = function(url, session, callback)
         }
     });
 }
-exports.disconnect = function(url, session, callback)
+export function disconnect(url, session, callback)
 {
     userManager.disconnect(url, session, {
         error: e => {
@@ -197,7 +200,7 @@ exports.disconnect = function(url, session, callback)
         }
     });
 }
-exports.create = function(username, password, email, url, callback)
+export function create(username, password, email, url, callback)
 {
     userManager.create(username, password, email, url, {
         error: e => {
@@ -208,7 +211,7 @@ exports.create = function(username, password, email, url, callback)
         }
     });
 }
-exports.connect = function(username, password, url, callback)
+export function connect(username, password, url, callback)
 {
     userManager.connect(username, password, url, {
         error: e => {
@@ -228,14 +231,13 @@ function getGlobalUrl()
         console.error(' [!] No url specified.');
         return undefined;
     }
-    var URL = require('url');
     url = URL.parse(url);
     url = url.protocol + '//' + url.hostname + ':' + url.port;
 
     return url;
 }
 
-exports.commandLine = function(argv)
+export function commandLine(argv)
 {
     var cmd = argv[2];
     switch(cmd)
@@ -244,8 +246,7 @@ exports.commandLine = function(argv)
             var url = getGlobalUrl();
             if(!url)
                 break;
-
-            var read = require("read");
+            
             var username = argv[3];
 
             read({
@@ -269,7 +270,7 @@ exports.commandLine = function(argv)
             if(!url)
                 break;
 
-            userManager.disconnect(url, {
+            userManager.disconnect(url, '', {
                 error: e => {
                     console.log(e.toString());
                 },
@@ -283,8 +284,6 @@ exports.commandLine = function(argv)
             var url = getGlobalUrl();
             if(!url)
                 break;
-
-            var read = require("read");
         
             read({
                 prompt: 'Username: '

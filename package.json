@@ -17,6 +17,10 @@
   "bin": {
     "monkkey": "./bin/monkkey"
   },
+  "scripts": {
+    "dev": "tsc --p package.json --watch",
+    "build": "tsc --p package.json"
+  },
   "author": "Adrien Castex <adrien.castex@gmail.com>",
   "license": "Unlicense",
   "dependencies": {
@@ -25,5 +29,22 @@
     "request": "^2.81.0",
     "read": "^1.0.7",
     "tar": "^2.2.1"
+  },
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outDir": "lib",
+    "sourceMap": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "target": "ES5"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^2.0.0",
+    "@types/read": "0.0.28",
+    "@types/request": "0.0.42",
+    "@types/tar": "^1.0.29"
   }
 }
