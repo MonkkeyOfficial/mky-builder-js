@@ -1,6 +1,6 @@
 {
   "name": "monkkey",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Manage the compression and the publication of exercice environments based on code execution",
   "main": "./lib/monkkey",
   "keywords": [
@@ -18,8 +18,8 @@
     "monkkey": "./bin/monkkey"
   },
   "scripts": {
-    "dev": "tsc --p package.json --watch",
-    "build": "tsc --p package.json"
+    "dev": "tsc --p package.json --declaration --watch",
+    "build": "tsc --p package.json --declaration"
   },
   "author": "Adrien Castex <adrien.castex@gmail.com>",
   "license": "Unlicense",
