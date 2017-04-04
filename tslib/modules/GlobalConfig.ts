@@ -1,3 +1,4 @@
+import * as URL from 'url'
 import * as fs from 'fs'
 
 var globalConfig;
@@ -14,18 +15,33 @@ catch(ex)
     };
 }
 
-function $(name : string, defaultValue : any, root? : object)
+export class GlobalConfiguration
 {
-    if(!root)
-        root = globalConfig;
-    if(root[name] === undefined)
-        root[name] = defaultValue;
+    found: boolean
+
+    // From file
+    baseUrl : string
+    url : string
+    exercices : Array<string>
+
+    // From static
+    configFileName : string
+    repositoryUrl : string
+    tmpFolder : string
+    exeName : string
 }
 
-globalConfig.exeName = 'monkkey';
+if(globalConfig.found)
+{
+    let url = globalConfig.url;
+    url = URL.parse(url);
+    url = url.protocol + '//' + url.hostname + ':' + url.port;
+    globalConfig.baseUrl = url;
+}
 
-$('tmpFolder', '.bin');
-$('repositoryUrl', 'http://192.168.0.36:9000');
-$('configFileName', 'monkkey.json');
+globalConfig.configFileName = 'monkkey.json'
+globalConfig.repositoryUrl = 'http://192.168.0.36:9000'
+globalConfig.tmpFolder = '.bin'
+globalConfig.exeName = 'monkkey'
 
-export default globalConfig as any;
+export default globalConfig as GlobalConfiguration;

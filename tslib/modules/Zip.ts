@@ -14,7 +14,11 @@ export interface ZipErrorCallback
     (error : any, directoryPath : string, destinationPath : string) : void;
 }
 
-export default function zip(directoryPath : string, destinationPath : string, callback : ZipCallback, errorCallback : ZipErrorCallback)
+export default function zip(
+    directoryPath : string,
+    destinationPath : string,
+    callback : ZipCallback,
+    errorCallback : ZipErrorCallback)
 {
     var dirDest = fs.createWriteStream(destinationPath);
 

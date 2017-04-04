@@ -1,6 +1,13 @@
 import * as request from 'request'
 
-function reqServer(url, data, session, callbacks)
+export interface UserCallback
+{
+    start? : () => void;
+    error? : (error : any) => void;
+    success? : (session : string, user : User) => void;
+}
+
+function reqServer(url : string, data : any, session : string, callbacks : UserCallback)
 {
     var cookie = undefined;
     if(session)
@@ -44,7 +51,7 @@ function reqServer(url, data, session, callbacks)
             return;
         }
 
-        callbacks.success(body.session, body.user);
+        callbacks.success(body.session, body.user as User);
     });
 }
 
@@ -56,29 +63,89 @@ function toSuffixableUrl(url)
     return url;
 }
 
-export function create(username : string, password : string, email : string, url : string, callbacks)
+export function create(user : User, url : string, callbacks : UserCallback)
 {
-    reqServer(toSuffixableUrl(url) + '/user/create', {
-        username: username,
-        password: password,
-        email: email
-    }, undefined, callbacks);
+    reqServer(toSuffixableUrl(url) + '/user/create', user, undefined, callbacks);
 }
 
-export function connect(username : string, password : string, url : string, callbacks)
+export function connect(user : User, url : string, callbacks : UserCallback)
 {
-    reqServer(toSuffixableUrl(url) + '/user/connect', {
-        username: username,
-        password: password
-    }, undefined, callbacks);
+    reqServer(toSuffixableUrl(url) + '/user/connect', user, undefined, callbacks);
 }
 
-export function getUser(url : string, session : string, callbacks)
+export function getUser(url : string, session : string, callbacks : UserCallback)
 {
     reqServer(toSuffixableUrl(url) + '/user', undefined, session, callbacks);
 }
 
-export function disconnect(url : string, session : string, callbacks)
+export function disconnect(url : string, session : string, callbacks : UserCallback)
 {
     reqServer(toSuffixableUrl(url) + '/user/connect', undefined, session, callbacks);
+}
+
+export class User
+{
+    static fromSession(session : string) : User
+    {
+        return {
+            session: session
+        } as User
+    }
+    constructor(username : string, password? : string, email? : string)
+    {
+        this.username = username;
+    }
+
+    username?: string;
+    password?: string;
+    email?: string;
+    session? : string;
+
+    private wrapCallback(callbacks : UserCallback)
+    {
+        function set(session : string, user : User)
+        {
+            if(user)
+            {
+                this.username = user.username;
+                this.password = user.password;
+                this.email = user.email;
+            }
+            this.session = session;
+        }
+
+        if(!callbacks.success)
+            callbacks.success = set;
+        else
+        {
+            let success = callbacks.success;
+            callbacks.success = (session, user) => {
+                set(session, user);
+                success(session, user);
+            }
+        }
+    }
+
+    isConnected() : boolean
+    {
+        return !!this.session;
+    }
+
+    create(url : string, callbacks : UserCallback)
+    {
+        this.wrapCallback(callbacks);
+        create(this, url, null)
+    }
+
+    connect(url : string, callbacks : UserCallback)
+    {
+        this.wrapCallback(callbacks);
+        connect(this, url, callbacks)
+    }
+
+    disconnect(url : string, callbacks : UserCallback)
+    {
+        this.wrapCallback(callbacks);
+        disconnect(url, this.session, callbacks)
+    }
 }
