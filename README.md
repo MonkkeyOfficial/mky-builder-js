@@ -152,14 +152,14 @@ monkkey.update(function(o, error) {
 
 ## Short road-map
 
-* Complete the README.md file
-* Check user management
-  * Check user addition
-  * Check user connection
-  * Check user disconnection
-  * Check user rights
-* Add 'check' command : check files
-* Add 'run' command
-* Transform to TypeScript for a better maintainability
-* Add TypeScript support (@type)
+- [ ] Complete the README.md file
+- [ ] Check user management
+  - [ ] Check user addition
+  - [ ] Check user connection
+  - [ ] Check user disconnection
+  - [ ] Check user rights
+- [ ] Add 'check' command : check files
+- [ ] Add 'run' command
+- [ ] Transform to TypeScript for a better maintainability
+- [ ] Add TypeScript support (@type)
 
